@@ -1,2 +1,2 @@
 -- INSERT into users
--- (displayname, email, password)
+-- (name, email, password)
