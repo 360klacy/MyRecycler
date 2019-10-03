@@ -11,9 +11,12 @@ router.get('/', function(req, res, next) {
 
 router.post('/signup', (req, res, next)=>{
   const { name, email, password} = req.body;
+  var msg = "";
+  console.log(req.body)
   if((!name)||(!email)||(!password)){
+    msg = "invalidData"
     res.json({
-      msg: "invalidData"
+      msg
     });
     return;
   }
@@ -23,8 +26,9 @@ router.post('/signup', (req, res, next)=>{
   db.query(checkUserQuery,[email],(err,results)=>{
     if(err){throw err};
     if (results > 0){
+      msg = "userExists"
       res.json({
-        msg: "userExists"
+        msg
       });
     }else{
       const insertUserQuery = `
@@ -38,8 +42,9 @@ router.post('/signup', (req, res, next)=>{
       const token = randToken.uid(50);
       db.query(insertUserQuery, [name,email,hash,token],(err2)=>{
         if(err2){throw err2};
+        msg = "userAdded"
         res.json({
-          msg: "userAdded",
+          msg,
           token,
           email,
           name
@@ -47,5 +52,51 @@ router.post('/signup', (req, res, next)=>{
       })
     }
   })
+  console.log(msg)
+})
+
+router.post('/login', (req, res)=>{
+  const { email, password } = req.body;
+  var msg = ""
+  
+  const getUserQuery = `
+  SELECT * FROM users 
+  WHERE email = $1`;
+
+  db.query(getUserQuery, [email], (err, results)=>{
+    if(err){throw err};
+    if(results.length > 0){
+      const thisRow = results[0];
+      const isValidPass = bcrypt.compareSync(password, thisRow.password);
+      if(isValidPass){
+        const token = randToken.uid(50);
+        const updateUserTokenQuery = `
+        UPDATE users
+        SET token = $1
+        WHERE email = $2`
+        db.query(updateUserTokenQuery, [token,email],(err)=>{
+          if(err){throw err};
+        })
+        msg = "loggedIn"
+        res.json({
+          msg,
+          name: thisRow.name,
+          email: thisRow.email,
+          token
+        })
+      }else{
+        msg = "badPass"
+        res.json({
+          msg
+        })
+      }
+    }else{
+      msg = "noEmail"
+      res.json({
+        msg
+      })
+    }
+  })
+  console.log(msg)
 })
 module.exports = router;
