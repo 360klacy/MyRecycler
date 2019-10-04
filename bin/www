@@ -4,8 +4,8 @@
  * Module dependencies.
  */
 
-var io = require('socket.io')()
-
+// 
+var io = require('../ticketstatus/ticketSocket')
 var app = require('../app');
 var debug = require('debug')('my-recycler:server');
 var http = require('http');
