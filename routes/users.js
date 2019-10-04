@@ -9,12 +9,13 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/signup', (req, res, next)=>{
+router.post('/signup', async (req, res, next)=>{
   const { name, email, password} = req.body;
-  var msg = "";
+  let msg = "undefined";
   console.log(req.body)
   if((!name)||(!email)||(!password)){
     msg = "invalidData"
+    console.log(msg)
     res.json({
       msg
     });
@@ -22,11 +23,12 @@ router.post('/signup', (req, res, next)=>{
   }
   const checkUserQuery = `
   SELECT * FROM users 
-  WHERE = $1`
-  db.query(checkUserQuery,[email],(err,results)=>{
-    if(err){throw err};
-    if (results > 0){
+  WHERE email = $1`;
+  
+  var checkUser = await db.query(checkUserQuery,[email])
+    if (checkUser.length > 0){
       msg = "userExists"
+      console.log(msg)
       res.json({
         msg
       });
@@ -40,22 +42,21 @@ router.post('/signup', (req, res, next)=>{
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(password, salt);
       const token = randToken.uid(50);
-      db.query(insertUserQuery, [name,email,hash,token],(err2)=>{
-        if(err2){throw err2};
-        msg = "userAdded"
+      var insertedUser = await db.none(insertUserQuery, [name,email,hash,token]);
+      
+      msg = "userAdded"
+        console.log(msg)
         res.json({
           msg,
           token,
           email,
           name
         })
-      })
     }
   })
-  console.log(msg)
-})
 
-router.post('/login', (req, res)=>{
+
+router.post('/login', async (req, res)=>{
   const { email, password } = req.body;
   var msg = ""
   
@@ -63,10 +64,9 @@ router.post('/login', (req, res)=>{
   SELECT * FROM users 
   WHERE email = $1`;
 
-  db.query(getUserQuery, [email], (err, results)=>{
-    if(err){throw err};
-    if(results.length > 0){
-      const thisRow = results[0];
+  var getUser = await db.query(getUserQuery, [email])
+    if(getUser.length > 0){
+      const thisRow = getUser[0];
       const isValidPass = bcrypt.compareSync(password, thisRow.password);
       if(isValidPass){
         const token = randToken.uid(50);
@@ -74,10 +74,11 @@ router.post('/login', (req, res)=>{
         UPDATE users
         SET token = $1
         WHERE email = $2`
-        db.query(updateUserTokenQuery, [token,email],(err)=>{
-          if(err){throw err};
-        })
+        
+        db.none(updateUserTokenQuery, [token,email]);
+
         msg = "loggedIn"
+        console.log(msg)
         res.json({
           msg,
           name: thisRow.name,
@@ -86,17 +87,17 @@ router.post('/login', (req, res)=>{
         })
       }else{
         msg = "badPass"
+        console.log(msg)
         res.json({
           msg
         })
       }
     }else{
       msg = "noEmail"
+      console.log(msg)
       res.json({
         msg
       })
     }
-  })
-  console.log(msg)
 })
 module.exports = router;

@@ -4,6 +4,8 @@
  * Module dependencies.
  */
 
+// 
+var io = require('../ticketstatus/ticketSocket')
 var app = require('../app');
 var debug = require('debug')('my-recycler:server');
 var http = require('http');
@@ -20,6 +22,7 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+io.listen(server)
 
 /**
  * Listen on provided port, on all network interfaces.
@@ -88,3 +91,5 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+
+module.exports = io

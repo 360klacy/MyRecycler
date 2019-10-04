@@ -6,6 +6,12 @@ const bcrypt = require("bcryptjs");
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
+  next();
 });
+
+router.get('/', (req,res)=>{
+  console.log('hello')
+})
+
 
 module.exports = router;
