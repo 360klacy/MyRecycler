@@ -9,8 +9,9 @@ router.get('/', function(req, res, next) {
 router.post('/create-ticket', async (req,res)=>{
     const userID = req.body.userid
     const userToken = req.body.token
+    const ticketProgress = req.body.progress
     var msg = '';
-    
+    console.log(req.body)
     const checkUserTokenQuery = `
     SELECT token 
     FROM users
@@ -21,23 +22,13 @@ router.post('/create-ticket', async (req,res)=>{
     if(userDBToken[0].token == userToken){
         const order = req.body.payload
         console.log(order)
-        const categoryRay = Object.entries(order);
-        const categoryQueryList = categoryRay.join(',')
-        const categoryValueList = categoryValueRay.join(',')
-        const checkTicketQuery = `
-        IF COL_LENGTH('orderTickets.$1') IS NOT NULL
-            ALTER TABLE orderTickets
-                ADD $1 INTEGER
-            RETURNING true
-        ELSE
-            RETURNING false`    
-
-            categoryRay.forEach(async(category)=>{
-                var newTableStatus = await db.one(checkTicketQuery,[category]);
-            })
-            const insertTicketQuery = `
-            INSERT INTO orderTickets ($1)
-            VALUES ($2)`
+        const ticketString = JSON.stringify(order)
+        const insertTicketQuery = `
+        INSERT INTO order_tickets (user_id, details, progress)
+        VALUES ($1, $2, $3)`
+        const insertTicket = await db.query(insertTicketQuery, [userID, ticketString, ticketProgress])
+        msg = 'success'
+        res.json({msg})
         }else{
         msg = 'invalidLogin'
         res.json({msg})
@@ -46,3 +37,14 @@ router.post('/create-ticket', async (req,res)=>{
 })
 
 module.exports = router;
+
+// const checkTicketQuery = `
+//         IF COL_LENGTH('orderTickets.$1') IS NOT NULL
+//             ALTER TABLE orderTickets
+//                 ADD $1 INTEGER
+//             RETURNING true
+//         ELSE
+//             RETURNING false`    
+// categoryRay.forEach(async(category)=>{
+//     var newTableStatus = await db.one(checkTicketQuery,[category]);
+// })
