@@ -3,12 +3,19 @@ create table users(
     name VARCHAR(20) NOT NULL,
     email VARCHAR(20) unique,
     password VARCHAR(20) NOT NULL,
-    token VARCHAR(255) NOT NULL
+    token VARCHAR(255) NOT NULL,
+    is_company BOOLEAN DEFAULT false
 );
 
-create table orderTickets(
+
+
+create table order_tickets(
     id serial PRIMARY KEY,
-    userid INTEGER NOT NULL
+    progress INTEGER,
+    user_id INTEGER NOT NULL,
+    company_id INTEGER,
+    FOREIGN KEY (company_id) REFERENCES users(id),
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 create table categories(

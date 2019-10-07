@@ -24,14 +24,13 @@ router.get('/', async function(req, res, next) {
     Object.entries(categoriesData).forEach(([category,subCategories])=>{
       let tempObj = {};
       tempObj.name = category     
-      console.log('thisone',subCategories)
       tempObj.category_id = subCategories.shift();
       tempObj.sub_categories = subCategories
 
       newStructure.push(tempObj)
     })
     console.log('newStructure',newStructure)
-    res.json({data: newStructure})
+    res.json(newStructure)
 });
 
 module.exports = router;
