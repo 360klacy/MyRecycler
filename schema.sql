@@ -14,6 +14,7 @@ create table order_tickets(
     progress INTEGER,
     user_id INTEGER NOT NULL,
     company_id INTEGER,
+    details VARCHAR,
     FOREIGN KEY (company_id) REFERENCES users(id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

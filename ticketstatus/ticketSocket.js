@@ -10,17 +10,17 @@ async function getTicketInfo(userToken){
     const userId = await db.query(getUserIdQuery, [userToken])
 
     const getTicketQuery = `
-    SELECT id, progress
+    SELECT id, progress, company_id
     FROM order_tickets
     WHERE user_id = $1
     `
-    const tickets = await db.query(getTicketQuery, [userId]);
+    const tickets = await db.query(getTicketQuery, [userId[0].id]);
     return tickets
 }
 // console.log('io',io)
 const connectionSockets = {};
 io.on('connection', (client)=>{
-    console.log(client.handshake.address);
+    // console.log(client.handshake.address);
     let clientTimeoutName = `timeout.${client.handshake.address}`
     
 
@@ -30,7 +30,7 @@ io.on('connection', (client)=>{
     connectionSockets[client.handshake.address] = {}
     client.on('sub-tickets',(token)=>{
         connectionSockets[client.handshake.address].timeInterval = setInterval(async ()=>{
-            var tickets = await getTicketInfo(token)
+            const tickets = await getTicketInfo(token)
             console.log(tickets)
             connectionSockets[client.handshake.address].tickets = tickets
             client.emit('ticket-info', tickets)
