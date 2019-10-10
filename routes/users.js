@@ -83,7 +83,8 @@ router.post('/login', async (req, res)=>{
           msg,
           name: thisRow.name,
           email: thisRow.email,
-          token
+          token,
+          id: thisRow.id
         })
       }else{
         msg = "badPass"

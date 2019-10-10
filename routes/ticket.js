@@ -9,7 +9,6 @@ router.get('/', function(req, res, next) {
 router.post('/create-ticket', async (req,res)=>{
     const userID = req.body.userid
     const userToken = req.body.token
-    const ticketProgress = req.body.progress || 0
     var msg = '';
     console.log(req.body)
     const checkUserTokenQuery = `
@@ -20,14 +19,21 @@ router.post('/create-ticket', async (req,res)=>{
     const userDBToken = await db.query(checkUserTokenQuery, [userID])
     console.log(userDBToken , userToken)
     if(userDBToken[0].token == userToken){
-        const order = req.body.payload
-        const details = req.body.details
-        console.log(order)
-        const ticketString = JSON.stringify(order)
+        const { payload, progress, pickupDate, address1, address2, time } = req.body
+        console.log(payload)
+        const invalidData = !payload ? 'payload' : false || !progress ? 'progress' : false || !pickupDate ? 'userDate': false || !address1 ? 'address' : false || !time ? 'time':false || false;
+        if(invalidData){
+            msg = `invalid ${invalidData}`
+            res.json({msg})
+            return
+        }
+        const customerPreferTime = JSON.stringify({date: pickupDate, time})
+        console.log(invalidData)
+        const ticketString = payload
         const insertTicketQuery = `
-        INSERT INTO order_tickets (user_id, order_items, progress, details)
+        INSERT INTO order_tickets (user_id, order_items, progress, customer_prefer_timeframe, pickup_address, pickup_address2)
         VALUES ($1, $2, $3, $4)`
-        const insertTicket = await db.query(insertTicketQuery, [userID, ticketString, ticketProgress, details])
+        const insertTicket = await db.query(insertTicketQuery, [userID, ticketString, progress, customerPreferTime, address1, address2 ])
         msg = 'success'
         res.json({msg})
     }else{
@@ -36,11 +42,12 @@ router.post('/create-ticket', async (req,res)=>{
         return
     }
 })
-router.post('/edit-ticket', async (req, res)=>{
+router.put('/edit-ticket', async (req, res)=>{
     
 })
-router.post('/update-ticket', async (req,res)=>{
-    
+router.put('/update-ticket', async (req,res)=>{
+    const {progress, ticketId, companyId, details, order} = req.body
+
 })
 module.exports = router;
 

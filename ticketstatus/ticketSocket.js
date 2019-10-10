@@ -3,7 +3,7 @@ const db = require("../db");
 
 async function getTicketInfo(){
     const getTicketQuery = `
-    SELECT users.id, users.address, users.name, order_tickets.order_items
+    SELECT users.id, users.address, users.name, order_tickets.order_items, order_tickets.progress
     FROM order_tickets RIGHT JOIN users
     ON order_tickets.user_id = users.id
     `
@@ -19,13 +19,23 @@ async function getUserTicketInfo(userToken){
     const userId = await db.query(getUserIdQuery, [userToken])
 
     const getTicketQuery = `
-    SELECT users.id, users.address, users.name, order_tickets.order_items
+    SELECT users.id, users.address, users.name, order_tickets.order_items, order_tickets.progress
     FROM order_tickets RIGHT JOIN users
     ON order_tickets.user_id = users.id
     WHERE users.id = $1
     `
     const tickets = await db.query(getTicketQuery, [userId[0].id]);
     return tickets
+}
+
+async function getOneTicket(id){
+    const getTicketByIdQuery = `
+    SELECT *
+    FROM order_tickets FULL JOIN users
+    on order_tickets.user_id = users.id
+    WHERE order_tickets.id = $1
+    `
+    return await db.query(getTicketByIdQuery, [id])
 }
 // console.log('io',io)
 const connectionSockets = {};
@@ -53,6 +63,10 @@ io.on('connection', (client)=>{
             connectionSockets[client.handshake.address].tickets = tickets
             client.emit('ticket-info', tickets)
         },5000)
+    })
+    client.on('need-ticket-info', async (id)=>{
+        const ticketData = await getOneTicket(id)
+        client.emit('ticket-data', ticketData)
     })
     client.on('disconnect',()=>{
         console.log('unsubbing')

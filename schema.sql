@@ -4,7 +4,7 @@ create table users(
     username VARCHAR(20) NOT NUll,
     email VARCHAR(60) unique,
     password VARCHAR(255) NOT NULL,
-    token VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL unique,
     address VARCHAR(255),
     is_company BOOLEAN DEFAULT false
 );
@@ -22,6 +22,7 @@ create table order_tickets(
     customer_prefer_timeframe VARCHAR,
     pickup_time VARCHAR,
     pickup_address VARCHAR NOT NULL,
+    pickup_address2 VARCHAR,
     pickup_discription VARCHAR,
     FOREIGN KEY (company_id) REFERENCES users(id),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
