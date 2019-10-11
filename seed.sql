@@ -8,5 +8,5 @@ VALUES ('auto parts', 1),('tires',1),('gas/oil mixture',1),('car batteries', 2),
 INSERT INTO users (name, username, email, password, token)
 VALUES ('kevin', 'kevin420', 'kevin@gmail.com', '123', '321');
 
-INSERT INTO order_tickets (progress,user_id)
-VALUES (2, 1);
+-- INSERT INTO order_tickets (progress,user_id)
+-- VALUES (2, 1);

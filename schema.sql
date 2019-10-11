@@ -9,8 +9,6 @@ create table users(
     is_company BOOLEAN DEFAULT false
 );
 
-
-
 create table order_tickets(
     id serial PRIMARY KEY,
     progress INTEGER NOT NULL,
@@ -19,9 +17,9 @@ create table order_tickets(
     details VARCHAR,
     order_items VARCHAR NOT NULL,
     price VARCHAR,
-    customer_prefer_timeframe VARCHAR,
+    customer_prefer_timeframe VARCHAR NOT NULL,
     pickup_time VARCHAR,
-    pickup_address VARCHAR NOT NULL,
+    pickup_address VARCHAR,
     pickup_address2 VARCHAR,
     pickup_discription VARCHAR,
     FOREIGN KEY (company_id) REFERENCES users(id),

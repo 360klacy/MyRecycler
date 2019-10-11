@@ -68,6 +68,7 @@ router.post('/login', async (req, res)=>{
     if(getUser.length > 0){
       const thisRow = getUser[0];
       const isValidPass = bcrypt.compareSync(password, thisRow.password);
+    console.log(thisRow)
       if(isValidPass){
         const token = randToken.uid(50);
         const updateUserTokenQuery = `
@@ -84,7 +85,9 @@ router.post('/login', async (req, res)=>{
           name: thisRow.name,
           email: thisRow.email,
           token,
-          id: thisRow.id
+          id: thisRow.id,
+          is_company: thisRow.is_company,
+          me: `why wont you work`
         })
       }else{
         msg = "badPass"

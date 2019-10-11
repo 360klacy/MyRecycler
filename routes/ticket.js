@@ -32,7 +32,7 @@ router.post('/create-ticket', async (req,res)=>{
         const ticketString = payload
         const insertTicketQuery = `
         INSERT INTO order_tickets (user_id, order_items, progress, customer_prefer_timeframe, pickup_address, pickup_address2)
-        VALUES ($1, $2, $3, $4)`
+        VALUES ($1, $2, $3, $4, $5, $6)`
         const insertTicket = await db.query(insertTicketQuery, [userID, ticketString, progress, customerPreferTime, address1, address2 ])
         msg = 'success'
         res.json({msg})
@@ -42,11 +42,81 @@ router.post('/create-ticket', async (req,res)=>{
         return
     }
 })
-router.put('/edit-ticket', async (req, res)=>{
+
+router.put('/add-ticket-quote', async (req,res)=>{
+    console.log(req.body)
+    const { progress, userId, token } = req.body
+    let msg = ""
+    const isCompanyQuery = `
+    SELECT token, is_company
+    FROM users
+    WHERE id = $1
+    `
+    const dbToken = await db.query(isCompanyQuery, [userId]);
+
+    if(dbToken[0].token === token && is_company){
+        if( progress === 1 ){
+            const { time, address, address2, price, ticketId } = req.body;
+            const newProgress = 2
+            const updateTicketQuery = `
+            UPDATE order_tickets
+            SET
+            progress = $1
+            pickup_time = $2, 
+            pickup_address = $3, 
+            pickup_address2 = $4,
+            price = $5
+            WHERE id = $6
+            `
+
+            db.query(updateTicketQuery, [newProgress,time,address,address2,price,ticketId])
+            msg = 'ticket updated';
+            res.json({msg})
+        }else{
+            msg = "wrong work flow"
+            res.json({msg})
+        }
+    }else{
+        msg = 'not authorized'
+        res.json({msg})
+    }
     
 })
-router.put('/update-ticket', async (req,res)=>{
-    const {progress, ticketId, companyId, details, order} = req.body
+router.put('/comfirm-ticket-quote', async (req,res)=>{
+    const { progress, userId, token } = req.body;
+    let msg = ""
+
+    const isUserQuery = `
+    SELECT token, is_company
+    FROM users
+    WHERE id = $1
+    `
+    const dbToken = await db.query(isUserQuery, [userId]);
+
+    if(dbToken[0].token === token && !is_company){
+        if( progress === 2 ){
+            const { customer_response } = req.body;
+            
+            let newProgress= customer_response ? 3 : -1 ;
+            
+            const updateTicketQuery = `
+            UPDATE order_tickets
+            SET
+            progress = $1
+            WHERE id = $2
+            `
+
+            db.query(updateTicketQuery, [newProgress,ticketId])
+            msg = 'ticket updated';
+            res.json({msg})
+        }else{
+            msg = "wrong work flow"
+            res.json({msg})
+        }
+    }else{
+        msg = 'not authorized'
+        res.json({msg})
+    }
 
 })
 module.exports = router;
