@@ -9,51 +9,51 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
-router.post('/signup', async (req, res, next)=>{
-  const { name, email, password} = req.body;
-  let msg = "undefined";
-  console.log(req.body)
-  if((!name)||(!email)||(!password)){
-    msg = "invalidData"
-    console.log(msg)
-    res.json({
-      msg
-    });
-    return;
-  }
-  const checkUserQuery = `
-  SELECT * FROM users 
-  WHERE email = $1`;
+// router.post('/signup', async (req, res, next)=>{
+//   const { fullName, username ,email, password } = req.body;
+//   let msg = "undefined";
+//   console.log(req.body)
+//   if((!fullName)||(!email)||(!password)||(!username)){
+//     msg = "invalidData"
+//     console.log(msg)
+//     res.json({
+//       msg
+//     });
+//     return;
+//   }
+//   const checkUserQuery = `
+//   SELECT * FROM users 
+//   WHERE email = $1`;
   
-  var checkUser = await db.query(checkUserQuery,[email])
-    if (checkUser.length > 0){
-      msg = "userExists"
-      console.log(msg)
-      res.json({
-        msg
-      });
-    }else{
-      const insertUserQuery = `
-      INSERT INTO users
-      (name, email, password, token)
-      VALUES
-      ($1,$2,$3,$4)`
+//   var checkUser = await db.query(checkUserQuery,[email])
+//     if (checkUser.length > 0){
+//       msg = "userExists"
+//       console.log(msg)
+//       res.json({
+//         msg
+//       });
+//     }else{
+//       const insertUserQuery = `
+//       INSERT INTO users
+//       (name, email, password, token, username)
+//       VALUES
+//       ($1,$2,$3,$4,$5)`
 
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(password, salt);
-      const token = randToken.uid(50);
-      var insertedUser = await db.none(insertUserQuery, [name,email,hash,token]);
+//       const salt = bcrypt.genSaltSync(10);
+//       const hash = bcrypt.hashSync(password, salt);
+//       const token = randToken.uid(50);
+//       var insertedUser = await db.none(insertUserQuery, [fullName,email,hash,token, username]);
       
-      msg = "userAdded"
-        console.log(msg)
-        res.json({
-          msg,
-          token,
-          email,
-          name
-        })
-    }
-  })
+//       msg = "userAdded"
+//         console.log(msg)
+//         res.json({
+//           msg,
+//           token,
+//           email,
+//           fullName
+//         })
+//     }
+//   })
 
 
 router.post('/login', async (req, res)=>{
@@ -74,7 +74,7 @@ router.post('/login', async (req, res)=>{
         UPDATE users
         SET token = $1
         WHERE email = $2`
-        
+
         db.none(updateUserTokenQuery, [token,email]);
 
         msg = "loggedIn"
@@ -83,7 +83,8 @@ router.post('/login', async (req, res)=>{
           msg,
           name: thisRow.name,
           email: thisRow.email,
-          token
+          token,
+          id: thisRow.id
         })
       }else{
         msg = "badPass"
@@ -99,5 +100,9 @@ router.post('/login', async (req, res)=>{
         msg
       })
     }
+})
+
+router.post('/update-user-prefereneces', async (req,res)=>{
+
 })
 module.exports = router;
