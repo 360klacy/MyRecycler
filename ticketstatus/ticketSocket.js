@@ -3,29 +3,32 @@ const db = require("../db");
 
 async function getTicketInfo(){
     const getTicketQuery = `
-    SELECT users.id, users.address, users.name, order_tickets.order_items, order_tickets.progress
-    FROM order_tickets RIGHT JOIN users
+    SELECT order_tickets.id, order_tickets.pickup_address, users.name, order_tickets.order_items, order_tickets.progress, order_tickets.customer_prefer_timeframe
+    FROM order_tickets FULL JOIN users
     ON order_tickets.user_id = users.id
     `
     const tickets = await db.query(getTicketQuery);
     return tickets
 }
-async function getUserTicketInfo(userToken){
+async function getUserTicketInfo(userId, userToken){
     const getUserIdQuery = `
-    SELECT id
+    SELECT token
     FROM users
-    WHERE token = $1
+    WHERE id = $1
     `
-    const userId = await db.query(getUserIdQuery, [userToken])
-
-    const getTicketQuery = `
-    SELECT users.id, users.address, users.name, order_tickets.order_items, order_tickets.progress
-    FROM order_tickets RIGHT JOIN users
-    ON order_tickets.user_id = users.id
-    WHERE users.id = $1
+    const userDBToken = await db.query(getUserIdQuery, [userId])
+    
+    if(userDBToken[0].token == userToken){
+        const getTicketQuery = `
+        SELECT users.id, users.name, order_tickets.order_items, order_tickets.progress
+        FROM order_tickets FULL JOIN users
+        ON order_tickets.user_id = users.id
+        WHERE users.id = $1
     `
-    const tickets = await db.query(getTicketQuery, [userId[0].id]);
+    const tickets = await db.query(getTicketQuery, [userId]);
     return tickets
+    }
+    
 }
 
 async function getOneTicket(id){
@@ -39,6 +42,7 @@ async function getOneTicket(id){
 }
 // console.log('io',io)
 const connectionSockets = {};
+const connectionUserSockets = {};
 io.on('connection', (client)=>{
     // console.log(client.handshake.address);
     let clientTimeoutName = `timeout.${client.handshake.address}`
@@ -48,6 +52,7 @@ io.on('connection', (client)=>{
         console.log(msg)
     })    
     connectionSockets[client.handshake.address] = {}
+    connectionUserSockets[client.handshake.address] = {}
     client.on('sub-tickets',(token)=>{
         connectionSockets[client.handshake.address].timeInterval = setInterval(async ()=>{
             const tickets = await getTicketInfo()
@@ -56,22 +61,31 @@ io.on('connection', (client)=>{
             client.emit('ticket-info', tickets)
         },5000)
     })
-    client.on(`sub-user-tickets`,(token)=>{
-        connectionSockets[client.handshake.address].timeInterval = setInterval(async ()=>{
-            const tickets = await getUserTicketInfo(token)
-            console.log(tickets)
-            connectionSockets[client.handshake.address].tickets = tickets
-            client.emit('ticket-info', tickets)
+    client.on(`sub-user-ticket`,([id,token])=>{
+        connectionUserSockets[client.handshake.address].timeInterval = setInterval(async ()=>{
+            console.log(id,token)
+            const tickets = await getUserTicketInfo(id,token)
+            connectionUserSockets[client.handshake.address].tickets = tickets
+            client.emit('user-ticket-info', tickets)
         },5000)
     })
+    
     client.on('need-ticket-info', async (id)=>{
+        console.log('request recieved', id)
         const ticketData = await getOneTicket(id)
         client.emit('ticket-data', ticketData)
     })
     client.on('disconnect',()=>{
         console.log('unsubbing')
-        connectionSockets[client.handshake.address] !== undefined ? clearTimeout(connectionSockets[client.handshake.address].timeInterval) : null
-        delete connectionSockets[client.handshake.address]
+        if(connectionSockets[client.handshake.address] !== undefined){
+            clearTimeout(connectionSockets[client.handshake.address].timeInterval)
+            delete connectionSockets[client.handshake.address]
+        }
+        if(connectionUserSockets[client.handshake.address] !== undefined){
+            clearTimeout(connectionUserSockets[client.handshake.address].timeInterval)
+            delete connectionUserSockets[client.handshake.address]
+
+        }
     })
 
 })
