@@ -33,7 +33,7 @@ async function getUserTicketInfo(userId, userToken){
 
 async function getOneTicket(id){
     const getTicketByIdQuery = `
-    SELECT *
+    SELECT users.id as user_id, order_tickets.id AS ticket_id, order_tickets.progress, order_tickets.order_items, order_tickets.price, order_tickets.customer_prefer_timeframe, order_tickets.pickup_address, order_tickets.pickup_address2, users.name
     FROM order_tickets FULL JOIN users
     on order_tickets.user_id = users.id
     WHERE order_tickets.id = $1
@@ -56,7 +56,7 @@ io.on('connection', (client)=>{
     client.on('sub-tickets',(token)=>{
         connectionSockets[client.handshake.address].timeInterval = setInterval(async ()=>{
             const tickets = await getTicketInfo()
-            console.log(tickets)
+            console.log('59',tickets)
             connectionSockets[client.handshake.address].tickets = tickets
             client.emit('ticket-info', tickets)
         },5000)
@@ -73,6 +73,7 @@ io.on('connection', (client)=>{
     client.on('need-ticket-info', async (id)=>{
         console.log('request recieved', id)
         const ticketData = await getOneTicket(id)
+        console.log('76',ticketData)
         client.emit('ticket-data', ticketData)
     })
     client.on('disconnect',()=>{
