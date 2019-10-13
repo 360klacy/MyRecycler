@@ -19,6 +19,7 @@ create table order_tickets(
     price VARCHAR,
     customer_prefer_timeframe VARCHAR NOT NULL,
     pickup_time VARCHAR,
+    pickup_date VARCHAR,
     pickup_address VARCHAR,
     pickup_address2 VARCHAR,
     pickup_discription VARCHAR,

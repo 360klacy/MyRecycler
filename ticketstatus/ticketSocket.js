@@ -4,7 +4,7 @@ const db = require("../db");
 async function getTicketInfo(){
     const getTicketQuery = `
     SELECT order_tickets.id, order_tickets.pickup_address, users.name, order_tickets.order_items, order_tickets.progress, order_tickets.customer_prefer_timeframe
-    FROM order_tickets FULL JOIN users
+    FROM order_tickets LEFT JOIN users
     ON order_tickets.user_id = users.id
     `
     const tickets = await db.query(getTicketQuery);
@@ -20,7 +20,7 @@ async function getUserTicketInfo(userId, userToken){
     
     if(userDBToken[0].token == userToken){
         const getTicketQuery = `
-        SELECT users.id, users.name, order_tickets.order_items, order_tickets.progress
+        SELECT users.id, users.name, order_tickets.order_items, order_tickets.progress, order_tickets.id as ticket_id
         FROM order_tickets FULL JOIN users
         ON order_tickets.user_id = users.id
         WHERE users.id = $1
@@ -71,9 +71,9 @@ io.on('connection', (client)=>{
     })
     
     client.on('need-ticket-info', async (id)=>{
-        console.log('request recieved', id)
+        // console.log('request recieved', id)
         const ticketData = await getOneTicket(id)
-        console.log('76',ticketData)
+        // console.log('76',ticketData)
         client.emit('ticket-data', ticketData)
     })
     client.on('disconnect',()=>{
