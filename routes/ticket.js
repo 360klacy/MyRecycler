@@ -44,9 +44,10 @@ router.post('/create-ticket', async (req,res)=>{
 })
 
 router.put('/add-ticket-quote', async (req,res)=>{
-    console.log(req.body)
     const { progress, userId, token } = req.body
+    console.log(req.body)
     let msg = ""
+
     const isCompanyQuery = `
     SELECT token, is_company
     FROM users
@@ -54,14 +55,14 @@ router.put('/add-ticket-quote', async (req,res)=>{
     `
     const dbToken = await db.query(isCompanyQuery, [userId]);
 
-    if(dbToken[0].token === token && is_company){
+    if(dbToken[0].token === token && dbToken[0].is_company){
         if( progress === 1 ){
             const { time, address, address2, price, ticketId } = req.body;
             const newProgress = 2
             const updateTicketQuery = `
             UPDATE order_tickets
             SET
-            progress = $1
+            progress = $1,
             pickup_time = $2, 
             pickup_address = $3, 
             pickup_address2 = $4,
@@ -82,22 +83,23 @@ router.put('/add-ticket-quote', async (req,res)=>{
     }
     
 })
-router.put('/comfirm-ticket-quote', async (req,res)=>{
-    const { progress, userId, token } = req.body;
+router.put('/confirm-ticket-quote', async (req,res)=>{
+    const { progress, userId, token, ticketId } = req.body;
     let msg = ""
 
     const isUserQuery = `
-    SELECT token, is_company
-    FROM users
-    WHERE id = $1
+    SELECT users.token, users.is_company, users.id, order_tickets.progress
+    FROM users RIGHT JOIN order_tickets
+    ON users.id = order_tickets.user_id
+    WHERE order_tickets.id = $1
     `
-    const dbToken = await db.query(isUserQuery, [userId]);
-
-    if(dbToken[0].token === token && !is_company){
-        if( progress === 2 ){
-            const { customer_response } = req.body;
+    const dbToken = await db.query(isUserQuery, [ticketId]);
+    console.log(dbToken,dbToken[0].token === token && !dbToken[0].is_company, req.body)
+    if(dbToken[0].token === token && !dbToken[0].is_company){
+        if( dbToken[0].progress === 2 ){
+            const { userValue } = req.body;
             
-            let newProgress= customer_response ? 3 : -1 ;
+            let newProgress= userValue ? 3 : -1 ;
             
             const updateTicketQuery = `
             UPDATE order_tickets
