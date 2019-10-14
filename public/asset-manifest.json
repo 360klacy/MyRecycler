@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.39d9acb2.chunk.css",
+    "main.js": "/static/js/main.b6770032.chunk.js",
+    "main.js.map": "/static/js/main.b6770032.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.4c86fdf6.js",
+    "runtime-main.js.map": "/static/js/runtime-main.4c86fdf6.js.map",
+    "static/js/2.fe256ed7.chunk.js": "/static/js/2.fe256ed7.chunk.js",
+    "static/js/2.fe256ed7.chunk.js.map": "/static/js/2.fe256ed7.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.58ec7506c659c212484da5359579336b.js": "/precache-manifest.58ec7506c659c212484da5359579336b.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.39d9acb2.chunk.css.map": "/static/css/main.39d9acb2.chunk.css.map",
+    "static/media/App.css": "/static/media/recycle-hero.b9acc812.jpg"
+  }
+}
