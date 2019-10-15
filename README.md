@@ -1,8 +1,13 @@
 # R-Waste
 ## Corporate Waste Ticketing and Scheduling Application 
 
-![Screenshot](r-waste-preview(1).png)
+![Screenshot](r-waste-preview(1)-crop.png)
 
+![Screenshot](r-waste-preview(2)-crop.png)
+
+![Screenshot](r-waste-preview-user-dashboard.png)
+
+## Overview 
 R-Waste was developed and founded in Atlanta, Ga by four young engineers in the south’s largest tech hub, Atlanta Tech Village. The idea started off as a class project but soon became OUR way of saving the earth. Many of us would like to recycle more often but questions like where, what, and how holds us back from doing so.
 
 Have no fear, R-Waste is here! Simply sign up, choose your desired recyclables, pick up time, and there you have it, you just saved the world! All superheroes don’t wear capes but with R-Waste you can save OUR world!
