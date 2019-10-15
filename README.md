@@ -7,7 +7,8 @@ R-Waste was developed and founded in Atlanta, Ga by four young engineers in the 
 
 Have no fear, R-Waste is here! Simply sign up, choose your desired recyclables, pick up time, and there you have it, you just saved the world! All superheroes don’t wear capes but with R-Waste you can save OUR world!
 
-The goal of this application is to assist waste management companies provide quick quotes and schedule waste pick up for consumers - think Uber but for waste removal.  
+
+<strong>The goal of this application is to assist waste management companies provide quick quotes and schedule waste pick up for consumers - think Uber but for waste removal.</strong>
 
 ### Ticket Lifecycle 
  1. Consumer submits a ticket with their waste removal requirements
