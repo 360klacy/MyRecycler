@@ -57,20 +57,21 @@ router.put('/add-ticket-quote', async (req,res)=>{
 
     if(dbToken[0].token === token && dbToken[0].is_company){
         if( progress === 1 ){
-            const { time, address, address2, price, ticketId } = req.body;
+            const { time, date, address, address2, price, ticketId } = req.body;
             const newProgress = 2
             const updateTicketQuery = `
             UPDATE order_tickets
             SET
             progress = $1,
             pickup_time = $2, 
-            pickup_address = $3, 
-            pickup_address2 = $4,
-            price = $5
-            WHERE id = $6
+            pickup_date = $3,
+            pickup_address = $4, 
+            pickup_address2 = $5,
+            price = $6
+            WHERE id = $7
             `
 
-            db.query(updateTicketQuery, [newProgress,time,address,address2,price,ticketId])
+            db.query(updateTicketQuery, [newProgress,time,date,address,address2,price,ticketId])
             msg = 'ticket updated';
             res.json({msg})
         }else{
