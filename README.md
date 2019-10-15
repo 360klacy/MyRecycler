@@ -1,11 +1,9 @@
 # R-Waste
 ## Corporate Waste Ticketing and Scheduling Application 
 
-![Screenshot](r-waste-preview(1)-crop.png)
+![Screenshot](r-waste-signup.gif)
 
-![Screenshot](r-waste-preview(2)-crop.png)
-
-![Screenshot](r-waste-preview-user-dashboard.png)
+![Screenshot](r-waste-add-order.gif)
 
 ## Overview 
 R-Waste was developed and founded in Atlanta, Ga by four young engineers in the south’s largest tech hub, Atlanta Tech Village. The idea started off as a class project but soon became OUR way of saving the earth. Many of us would like to recycle more often but questions like where, what, and how holds us back from doing so.
@@ -63,3 +61,11 @@ git clone https://github.com/360klacy/my-recycler-front-end.git
 * JavaScript 
 * CSS
 * HTML 
+
+
+
+![Screenshot](r-waste-preview(1)-crop.png)
+
+![Screenshot](r-waste-preview(2)-crop.png)
+
+![Screenshot](r-waste-preview-user-dashboard.png)
