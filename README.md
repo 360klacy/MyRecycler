@@ -57,6 +57,7 @@ git clone https://github.com/360klacy/my-recycler-front-end.git
 
 ## Technologies Utilized 
 * Node.js 
+* Socket.io
 * Postgres Database 
 * Express.js
 * React.js
