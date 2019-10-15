@@ -11,11 +11,11 @@ Have no fear, R-Waste is here! Simply sign up, choose your desired recyclables, 
 <strong>The goal of this application is to assist waste management companies provide quick quotes and schedule waste pick up for consumers - think Uber but for waste removal.</strong>
 
 ### Ticket Lifecycle 
- 1. Consumer submits a ticket with their waste removal requirements
- 2. Company update tickets with quote and final scheduling requirements 
- 3. Consumer users accept or deny the the quote
- 4a. If quote is accepted the ticket is placed in a scheduled queue for both consumer and end user. 
- 4b. If quote id declined the ticket is removed from queue
+ 1. Consumer submits a ticket with their waste removal requirements.
+ 2. The Company updates the tickets with a quote and final scheduling requirements.
+ 3. Consumer users have the option to either accept or deny the the quote.
+ 4a. If the quote is accepted, the ticket is placed in a scheduled queue for both consumer and end user. 
+ 4b. f the quote is declined, the ticket is removed from queue.
 
 ### Next Step: 
 During this two week sprint, we couldnt pack all the features we wanted to include.  Some of the next steps for this app include: 
